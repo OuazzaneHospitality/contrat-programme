@@ -804,24 +804,27 @@ body.read-only [contenteditable="true"]:hover,body.read-only [contenteditable="t
         <div class="modal">
             <div class="modal-header"><h2>⚙️ Configuration Firebase</h2></div>
             <div class="modal-body">
-                <p style="margin-bottom:20px;">Configurez Firebase pour la synchronisation en temps réel.</p>
-                <div class="step-indicator"><div class="step-number">1</div><div class="step-text">Créer un projet sur <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a></div></div>
-                <div class="step-indicator"><div class="step-number">2</div><div class="step-text">Activer Realtime Database (mode test)</div></div>
-                <div class="step-indicator"><div class="step-number">3</div><div class="step-text">Copier la configuration ci-dessous</div></div>
+                <p style="margin-bottom:20px;"><strong>✅ Configuration pré-intégrée</strong> - La base de données Ouazzane Hospitality est déjà configurée.</p>
+                <div class="highlight-box" style="margin-bottom:20px;padding:15px;">
+                    <strong>Base de données :</strong> ouazzane-hospitality<br>
+                    <strong>Chemin :</strong> contrat-ouazzane/<br>
+                    <strong>Région :</strong> europe-west1 (Belgique)
+                </div>
                 <div class="form-group">
-                    <label>Configuration Firebase (JSON)</label>
-                    <textarea id="firebaseConfig" placeholder='{
-  "apiKey": "...",
-  "authDomain": "...",
-  "databaseURL": "...",
-  "projectId": "...",
-  "storageBucket": "...",
-  "messagingSenderId": "...",
-  "appId": "..."
-}'></textarea>
+                    <label>Configuration Firebase (JSON) - Modifiable si nécessaire</label>
+                    <textarea id="firebaseConfig">{
+  "apiKey": "AIzaSyCYIY1npF5lBb8uJ6Z_evETDMaDcnfl_5o",
+  "authDomain": "ouazzane-hospitality.firebaseapp.com",
+  "databaseURL": "https://ouazzane-hospitality-default-rtdb.europe-west1.firebasedatabase.app",
+  "projectId": "ouazzane-hospitality",
+  "storageBucket": "ouazzane-hospitality.firebasestorage.app",
+  "messagingSenderId": "55074975436",
+  "appId": "1:55074975436:web:c1aad3f108ad0f9d491c69"
+}</textarea>
                 </div>
             </div>
             <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeConfigModal()">Fermer</button>
                 <button class="btn btn-secondary" onclick="useOfflineMode()">Mode hors-ligne</button>
                 <button class="btn btn-primary" onclick="testAndSaveConfig()">Tester et sauvegarder</button>
             </div>
@@ -849,6 +852,18 @@ body.read-only [contenteditable="true"]:hover,body.read-only [contenteditable="t
     <script>
     // ========== CONFIGURATION ==========
     const EDIT_PASSWORD = 'ouazzane2026';
+    
+    // Configuration Firebase intégrée - Ouazzane Hospitality
+    const DEFAULT_FIREBASE_CONFIG = {
+        apiKey: "AIzaSyCYIY1npF5lBb8uJ6Z_evETDMaDcnfl_5o",
+        authDomain: "ouazzane-hospitality.firebaseapp.com",
+        databaseURL: "https://ouazzane-hospitality-default-rtdb.europe-west1.firebasedatabase.app",
+        projectId: "ouazzane-hospitality",
+        storageBucket: "ouazzane-hospitality.firebasestorage.app",
+        messagingSenderId: "55074975436",
+        appId: "1:55074975436:web:c1aad3f108ad0f9d491c69"
+    };
+    
     let firebaseApp = null;
     let database = null;
     let isOnline = false;
@@ -879,15 +894,14 @@ body.read-only [contenteditable="true"]:hover,body.read-only [contenteditable="t
     }
 
     function loadConfig() {
-        const config = localStorage.getItem('firebase_config');
-        if (config) {
-            try {
-                initFirebase(JSON.parse(config));
-            } catch (e) {
-                console.error('Config error:', e);
-                updateConnectionStatus('offline');
-            }
-        } else {
+        // Utiliser la config localStorage si disponible, sinon utiliser la config par défaut
+        const savedConfig = localStorage.getItem('firebase_config');
+        const config = savedConfig ? JSON.parse(savedConfig) : DEFAULT_FIREBASE_CONFIG;
+        
+        try {
+            initFirebase(config);
+        } catch (e) {
+            console.error('Config error:', e);
             updateConnectionStatus('offline');
         }
     }
